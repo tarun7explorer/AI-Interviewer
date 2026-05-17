@@ -1,0 +1,14 @@
+KNOWLEDGE BASE: AI AND MACHINE LEARNING
+Role: AI Engineer / ML Developer
+
+Topic 1: Retrieval-Augmented Generation (RAG)
+Concept: RAG is an AI framework that retrieves facts from an external knowledge base to ground large language models (LLMs) on the most accurate, up-to-date information and gives users insight into the LLM's generative process.
+Ideal Interview Answer Context: A strong candidate should mention that RAG combines an information retrieval component with a text generator model. They should highlight that it solves the "hallucination" problem in LLMs by grounding answers in factual, provided documents rather than relying solely on the model's parametric memory. Key tools include vector databases, embeddings, and chunking strategies.
+
+Topic 2: Overfitting in Machine Learning
+Concept: Overfitting occurs when a machine learning model learns the training data too well, including the noise and outliers, resulting in poor generalization to new, unseen data.
+Ideal Interview Answer Context: The candidate should define overfitting clearly. To prevent it, they should mention techniques like Cross-Validation, Regularization (L1/L2), Dropout (in neural networks), Early Stopping, and gathering more training data.
+
+Topic 3: Embeddings
+Concept: Embeddings are dense vector representations of data (like text, images, or audio) in a continuous vector space where similar items are located close to each other.
+Ideal Interview Answer Context: A good answer will explain that embeddings capture semantic meaning. They are crucial for tasks like semantic search, recommendation systems, and serving as the foundational input for transformer models.

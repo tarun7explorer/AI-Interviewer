@@ -1,0 +1,22 @@
+ai-interview-system/
+│
+├── api/                   
+│   ├── index.py           <-- (Use the main.py code I gave you)
+│   ├── utils.py           <-- (Use the utils.py code I gave you)
+│   ├── ai_engine.py       <-- (Use the ai_engine.py code I gave you)
+│   ├── database.py        <-- (Use the database.py code I gave you)
+│   └── .env               <-- (Keep your HuggingFace key here for local testing)
+│
+├── data/                  
+│   ├── resumes/           <-- (Empty folder)
+│   └── knowledge_base/    
+│       ├── ai_ml.txt      <-- (Your existing text file)
+│       └── backend.txt    <-- (Your existing text file)
+│
+├── index.html             <-- (Use the HTML I gave you)
+├── style.css              <-- (Use the CSS I gave you)
+├── script.js              <-- (Use the JS I gave you)
+│
+├── requirements.txt       <-- (Use the updated requirements I gave you)
+├── vercel.json            <-- (CRITICAL: Use the json code I gave you)
+└── README.md

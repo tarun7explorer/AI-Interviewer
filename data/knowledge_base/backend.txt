@@ -1,0 +1,14 @@
+KNOWLEDGE BASE: BACKEND ENGINEERING
+Role: Backend Developer / Full-Stack Developer
+
+Topic 1: RESTful APIs
+Concept: REST (Representational State Transfer) is an architectural style for designing networked applications. It relies on a stateless, client-server communication protocol, almost always HTTP.
+Ideal Interview Answer Context: A strong candidate will mention standard HTTP methods (GET, POST, PUT, DELETE, PATCH) and explain statelessness (each request from client to server must contain all info needed to understand the request). They should also mention proper use of HTTP status codes (e.g., 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 500 Internal Server Error).
+
+Topic 2: Database Optimization and Indexing
+Concept: An index is a data structure that improves the speed of data retrieval operations on a database table at the cost of additional writes and storage space.
+Ideal Interview Answer Context: The candidate should explain that indexes work similarly to the index of a book. They should mention that while indexes speed up SELECT queries, they can slow down INSERT, UPDATE, and DELETE operations. Mentioning B-trees or hash indexes is a bonus.
+
+Topic 3: Asynchronous Programming in Python
+Concept: Asynchronous programming is a concurrent programming design that allows a unit of work to run separately from the primary application thread. In Python, this is primarily handled via the `asyncio` library.
+Ideal Interview Answer Context: The candidate should explain the difference between synchronous (blocking) and asynchronous (non-blocking) code. They should mention the `async` and `await` keywords in Python and explain that async is particularly useful for I/O-bound tasks (like making network requests or database calls) rather than CPU-bound tasks.

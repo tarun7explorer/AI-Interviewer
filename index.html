@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuralHire — AI Interview System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <section id="screen-welcome" class="screen active">
+    <div class="welcome-layout">
+
+      <div class="brand-panel">
+        <div class="logo-mark" aria-hidden="true">
+          <span class="logo-hex"></span>
+          <span class="logo-inner">N</span>
+        </div>
+        <h1 class="brand-name">Neural<span class="accent">Hire</span></h1>
+        <p class="brand-tagline">AI-Powered Technical Interviews</p>
+        <ul class="feature-list" role="list">
+          <li><span class="feat-icon">⬡</span> RAG-grounded questions per role</li>
+          <li><span class="feat-icon">⬡</span> Real-time LLM answer evaluation</li>
+          <li><span class="feat-icon">⬡</span> Instant feedback with ideal answers</li>
+          <li><span class="feat-icon">⬡</span> Full report with grade at the end</li>
+        </ul>
+        <div class="brand-badge">
+          <span class="badge-dot"></span>
+          <span>System Online</span>
+        </div>
+      </div>
+
+      <div class="glass-card form-card">
+        <div class="card-header">
+          <span class="step-tag">STEP 01</span>
+          <h2>Begin Your Interview</h2>
+          <p class="subtext">Enter your details to receive your first question.</p>
+        </div>
+
+        <form id="welcome-form" novalidate>
+          <div class="field-group">
+            <label for="f-name">Full Name</label>
+            <div class="input-wrap">
+              <input id="f-name" type="text" placeholder="e.g. Aisha Patel"
+                     autocomplete="name" required />
+              <span class="input-line"></span>
+            </div>
+            <span class="field-error" id="err-name"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="f-email">Email Address</label>
+            <div class="input-wrap">
+              <input id="f-email" type="email" placeholder="e.g. aisha@acme.io"
+                     autocomplete="email" required />
+              <span class="input-line"></span>
+            </div>
+            <span class="field-error" id="err-email"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="f-role">Interview Role</label>
+            <div class="select-wrap">
+              <select id="f-role" required>
+                <option value="" disabled selected>Select a role…</option>
+                <option value="AI Engineer">AI Engineer</option>
+                <option value="Backend Developer">Backend Developer</option>
+              </select>
+              <span class="select-arrow" aria-hidden="true">&#8964;</span>
+            </div>
+            <span class="field-error" id="err-role"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="f-resume">Upload Resume <span class="label-optional">(PDF · optional)</span></label>
+            <div class="file-upload-wrap" id="file-upload-wrap">
+              <input id="f-resume" type="file" accept=".pdf" class="file-input-hidden" />
+              <div class="file-drop-zone" id="file-drop-zone" role="button" tabindex="0"
+                   aria-label="Upload resume PDF">
+                <div class="file-drop-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 16V8m0 0L9 11m3-3l3 3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="file-drop-text">
+                  <span class="file-drop-primary">Drop PDF here or <span class="file-drop-link">browse</span></span>
+                  <span class="file-drop-secondary" id="file-drop-hint">Supports PDF · max 10 MB</span>
+                </div>
+              </div>
+              <div class="file-selected-pill" id="file-selected-pill" hidden>
+                <span class="file-pill-icon" aria-hidden="true">📄</span>
+                <span class="file-pill-name" id="file-pill-name"></span>
+                <button class="file-pill-remove" id="file-pill-remove" type="button"
+                        aria-label="Remove file">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="btn-start">
+            <span class="btn-label">Start Interview</span>
+            <span class="btn-icon" aria-hidden="true">→</span>
+            <span class="btn-loader" aria-hidden="true"></span>
+          </button>
+
+          <p class="form-note" id="form-api-error" role="alert"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="screen-interview" class="screen">
+
+    <header class="interview-topbar">
+      <div class="topbar-brand">
+        <span class="logo-micro" aria-hidden="true">N</span>
+        <span>NeuralHire</span>
+      </div>
+      <div class="topbar-meta">
+        <span id="iv-candidate-name" class="meta-name"></span>
+        <span class="meta-sep">·</span>
+        <span id="iv-role-badge" class="meta-role"></span>
+      </div>
+      <div class="progress-wrap" aria-label="Interview progress">
+        <span id="iv-q-counter" class="q-counter">Q1 / 10</span>
+        <div class="progress-track">
+          <div class="progress-fill" id="iv-progress-bar"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="interview-main">
+
+      <div class="glass-card question-card" id="question-card">
+        <div class="qcard-meta">
+          <span class="q-tag" id="iv-topic-tag">Topic</span>
+          <span class="q-difficulty" id="iv-diff-tag">Medium</span>
+          <span class="q-type-badge" id="iv-type-badge" hidden>MCQ</span>
+        </div>
+        <div class="ai-avatar" aria-hidden="true">
+          <div class="avatar-ring"></div>
+          <div class="avatar-core">AI</div>
+        </div>
+        <p class="question-text" id="iv-question-text">
+          Loading your question…
+        </p>
+      </div>
+
+      <div class="answer-panel">
+
+        <div class="glass-card answer-card" id="answer-text-panel">
+          <label for="iv-answer" class="answer-label">
+            <span class="label-icon" aria-hidden="true">✎</span>
+            Your Answer
+          </label>
+          <textarea id="iv-answer"
+                    placeholder="Type your technical answer here. Be specific, use examples, and explain your reasoning…"
+                    rows="7"
+                    maxlength="8000"></textarea>
+          <div class="answer-footer">
+            <span class="char-counter">
+              <span id="iv-char-count">0</span> / 8000 chars
+            </span>
+            <div class="answer-actions">
+              <button class="btn-ghost" id="btn-clear-answer" type="button">
+                Clear
+              </button>
+              <button class="btn-primary" id="btn-submit-answer" type="button">
+                <span class="btn-label">Submit Answer</span>
+                <span class="btn-icon" aria-hidden="true">→</span>
+                <span class="btn-loader" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card mcq-panel" id="answer-mcq-panel" hidden>
+          <div class="mcq-header">
+            <span class="label-icon" aria-hidden="true">◈</span>
+            <span class="answer-label-text">Choose the Best Answer</span>
+            <span class="mcq-badge">Multiple Choice</span>
+          </div>
+
+          <div class="mcq-options" id="mcq-options" role="radiogroup" aria-label="Answer options">
+            </div>
+
+          <div class="mcq-footer">
+            <span class="mcq-hint" id="mcq-hint">Select an option to enable submission</span>
+            <button class="btn-primary" id="btn-submit-mcq" type="button" disabled>
+              <span class="btn-label">Confirm Answer</span>
+              <span class="btn-icon" aria-hidden="true">→</span>
+              <span class="btn-loader" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+
+      </div></main>
+
+    <div class="feedback-drawer" id="feedback-drawer" aria-live="polite">
+      <div class="drawer-handle" id="drawer-handle" role="button"
+           tabindex="0" aria-label="Toggle feedback panel">
+        <span></span>
+      </div>
+      <div class="drawer-content">
+        <div class="feedback-score-row">
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80" aria-hidden="true">
+              <circle class="ring-bg" cx="40" cy="40" r="34" />
+              <circle class="ring-fill" id="score-ring-fill" cx="40" cy="40" r="34" />
+            </svg>
+            <span class="score-number" id="fb-score">—</span>
+          </div>
+          <div class="feedback-summary">
+            <h3 id="fb-grade-label">Awaiting evaluation…</h3>
+            <div class="kw-row">
+              <div class="kw-group">
+                <span class="kw-label matched">✓ Keywords Used</span>
+                <span id="fb-kw-matched" class="kw-tags"></span>
+              </div>
+              <div class="kw-group">
+                <span class="kw-label missing">✕ Keywords Missed</span>
+                <span id="fb-kw-missing" class="kw-tags"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feedback-details">
+          <div class="fb-col">
+            <h4 class="fb-col-title strength">Strengths</h4>
+            <ul id="fb-strengths" class="fb-list"></ul>
+          </div>
+          <div class="fb-col">
+            <h4 class="fb-col-title improve">Improvements</h4>
+            <ul id="fb-improvements" class="fb-list"></ul>
+          </div>
+        </div>
+
+        <div class="ideal-answer-block">
+          <h4>Ideal Answer Summary</h4>
+          <p id="fb-ideal"></p>
+        </div>
+
+        <div class="drawer-actions">
+          <button class="btn-primary" id="btn-next-question" type="button">
+            <span class="btn-label" id="btn-next-label">Next Question</span>
+            <span class="btn-icon" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <section id="screen-results" class="screen">
+    <div class="results-layout">
+
+      <header class="results-header">
+        <div class="topbar-brand">
+          <span class="logo-micro" aria-hidden="true">N</span>
+          <span>NeuralHire</span>
+        </div>
+        <h2 class="results-title">Interview Complete</h2>
+        <p class="results-subtitle" id="res-subtitle"></p>
+      </header>
+
+      <div class="final-score-hero" id="final-score-hero">
+        <div class="hero-scan-line" aria-hidden="true"></div>
+        <div class="final-score-inner">
+          <p class="final-score-eyebrow">YOUR FINAL SCORE</p>
+          <div class="final-score-display">
+            <span class="final-score-num" id="final-score-num">—</span>
+            <span class="final-score-sep">/</span>
+            <span class="final-score-denom">10</span>
+          </div>
+          <div class="final-score-grade" id="final-score-grade">—</div>
+          <p class="final-score-summary" id="final-score-summary"></p>
+          <div class="final-score-chips">
+            <span class="chip" id="res-role-chip"></span>
+            <span class="chip" id="res-qs-chip"></span>
+          </div>
+        </div>
+        <div class="hero-ring-wrap" aria-hidden="true">
+          <svg class="hero-ring-svg" viewBox="0 0 340 340">
+            <circle class="hero-ring-track" cx="170" cy="170" r="150"/>
+            <circle class="hero-ring-fill" id="hero-ring-fill" cx="170" cy="170" r="150"/>
+          </svg>
+        </div>
+        <div class="hero-particles" id="hero-particles" aria-hidden="true"></div>
+      </div>
+
+      <div class="score-hero glass-card">
+        <div class="hero-left">
+          <div class="big-score-ring-wrap">
+            <svg class="big-score-ring" viewBox="0 0 160 160" aria-hidden="true">
+              <circle class="ring-bg" cx="80" cy="80" r="68" />
+              <circle class="ring-fill" id="big-ring-fill" cx="80" cy="80" r="68" />
+            </svg>
+            <div class="big-score-inner">
+              <span class="big-score-num" id="res-avg-score">—</span>
+              <span class="big-score-denom">/10</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="grade-badge" id="res-grade-badge">—</div>
+          <p class="summary-text" id="res-summary"></p>
+          <div class="meta-chips">
+            <span class="chip" id="res-role-chip-2"></span>
+            <span class="chip" id="res-qs-chip-2"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="breakdown-section">
+        <h3 class="section-heading">
+          <span class="sh-line" aria-hidden="true"></span>
+          Answer Breakdown
+          <span class="sh-line" aria-hidden="true"></span>
+        </h3>
+        <div class="breakdown-cards" id="res-breakdown"></div>
+      </div>
+
+      <div class="results-cta">
+        <button class="btn-primary btn-large" id="btn-restart" type="button">
+          <span class="btn-label">Start New Interview</span>
+          <span class="btn-icon" aria-hidden="true">↺</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
